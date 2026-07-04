@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Recipe Box — Fresh from the Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #FFFBF0;
+    --linen: #FFF3DC;
+    --leaf: #5B8C4A;
+    --leaf-dark: #3F6636;
+    --leaf-pale: #DCEAD2;
+    --tomato: #E1523D;
+    --tomato-dark: #B23A28;
+    --carrot: #E8951E;
+    --carrot-dark: #B96F0F;
+    --berry: #8E4A6B;
+    --berry-dark: #6B3450;
+    --lemon: #F2BE22;
+    --lemon-dark: #C6970D;
+    --wood: #B07A47;
+    --wood-dark: #7A4E27;
+    --wood-darker: #593719;
+    --charcoal: #2E2A20;
+    --ink-soft: #6b5c46;
+    --chalkboard: #2F4A3C;
+    --chalkboard-dark: #223729;
+    --chalk: #F5F1E2;
+    --chalk-soft: #C9D8CC;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(rgba(91,140,74,0.07) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(91,140,74,0.07) 2px, transparent 2px);
+    background-size: 42px 42px;
+    font-family: 'Nunito', sans-serif;
+    color: var(--charcoal);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .display{ font-family:'Permanent Marker', cursive; }
+
+  .topbar{
+    width:100%;
+    background:
+      repeating-linear-gradient(180deg, var(--wood) 0 34px, var(--wood-dark) 34px 36px);
+    border-bottom: 6px solid var(--wood-darker);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display:flex; justify-content:center;
+  }
+  .topbar-inner{
+    width:100%;
+    max-width:1040px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 16px 24px;
+  }
+  .brand{
+    font-family:'Permanent Marker', cursive;
+    font-size:1.9rem;
+    color: var(--cream);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand .veg{ font-size:1.6rem; filter: drop-shadow(1px 2px 0 rgba(0,0,0,0.2)); }
+  .userchip{
+    display:flex; align-items:center; gap:12px;
+    font-weight:700;
+    font-size:0.8rem;
+    color: var(--cream);
+  }
+  .userchip button{
+    font-family:'Nunito', sans-serif;
+    font-weight:800;
+    font-size:0.72rem;
+    letter-spacing:0.5px;
+    background: var(--tomato);
+    border: 2px solid var(--tomato-dark);
+    color: white;
+    padding:7px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    transition: transform .12s ease, background .15s ease;
+  }
+  .userchip button:hover{ background: var(--tomato-dark); transform: translateY(-1px); }
+
+  .stage{
+    width:100%;
+    max-width:1040px;
+    padding: 30px 24px 90px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .hidden{ display:none !important; }
+
+  button:focus-visible, [tabindex]:focus-visible, input:focus-visible{
+    outline: 3px solid var(--carrot-dark);
+    outline-offset: 2px;
+  }
+
+  #screen-auth{ margin-top:3vh; width:100%; display:flex; justify-content:center; }
+  .seed-packet{
+    width:100%;
+    max-width:400px;
+    background: var(--linen);
+    border-radius: 14px;
+    border: 3px solid var(--leaf-dark);
+    box-shadow: 0 12px 0 -6px var(--leaf-pale), 0 16px 26px rgba(0,0,0,0.22);
+    overflow:hidden;
+    position:relative;
+  }
+  .seed-packet-band{
+    background: repeating-linear-gradient(45deg, var(--tomato), var(--tomato) 14px, var(--tomato-dark) 14px, var(--tomato-dark) 28px);
+    padding: 18px 26px 14px;
+    text-align:center;
+  }
+  .seed-packet-band .icons{ font-size:1.6rem; letter-spacing:8px; }
+  .seed-packet-body{ padding: 20px 28px 26px; }
+
+  .auth-title{
+    font-family:'Permanent Marker', cursive;
+    font-size:1.9rem;
+    margin: 4px 0 2px;
+    color: var(--leaf-dark);
+    text-align:center;
+  }
+  .auth-sub{
+    margin: 0 0 22px;
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.5px;
+    color: var(--ink-soft);
+    text-align:center;
+    text-transform:uppercase;
+  }
+  .field{ margin: 0 0 16px; }
+  .field label{
+    display:block;
+    font-size:0.72rem;
+    font-weight:800;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    color: var(--leaf-dark);
+    margin-bottom:5px;
+  }
+  .field input{
+    width:100%;
+    font-family:'Nunito', sans-serif;
+    font-size:0.95rem;
+    background: var(--cream);
+    border: 2px solid #E4D6B8;
+    border-radius: 8px;
+    padding:9px 12px;
+    color: var(--charcoal);
+    outline:none;
+    transition: border-color .15s ease;
+  }
+  .field input:focus{ border-color: var(--carrot); }
+
+  .btn-primary{
+    display:block;
+    width: 100%;
+    margin: 8px 0 14px;
+    background: var(--leaf);
+    color: white;
+    border: 2px solid var(--leaf-dark);
+    padding: 12px 0;
+    font-family:'Nunito', sans-serif;
+    font-weight:800;
+    font-size:0.85rem;
+    letter-spacing:0.5px;
+    border-radius: 24px;
+    cursor:pointer;
+    transition: transform .12s ease, background .15s ease;
+  }
+  .btn-primary:hover{ background: var(--leaf-dark); transform: translateY(-1px); }
+
+  .switch-line{
+    margin: 4px 0;
+    font-size:0.8rem;
+    text-align:center;
+    color: var(--ink-soft);
+  }
+  .switch-line a{
+    color: var(--tomato-dark);
+    cursor:pointer;
+    font-weight:800;
+    text-decoration: underline;
+  }
+  .auth-error{
+    margin: 0 0 12px;
+    color: var(--tomato-dark);
+    font-size:0.78rem;
+    font-weight:700;
+    text-align:center;
+    min-height: 1.1em;
+  }
+  .auth-hint{
+    margin: 16px 0 0;
+    font-size:0.68rem;
+    color: var(--ink-soft);
+    border-top: 2px dashed #E4D6B8;
+    padding-top:10px;
+    text-align:center;
+  }
+
+  #screen-categories{ width:100%; }
+  .box-title{
+    font-family:'Permanent Marker', cursive;
+    font-size:1.9rem;
+    color: var(--leaf-dark);
+    text-align:center;
+    margin: 0 0 26px;
+  }
+  .tabs{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px 20px;
+    width:100%;
+  }
+  @media (max-width: 640px){
+    .tabs{ grid-template-columns: repeat(2, 1fr); }
+  }
+  .crate{
+    position:relative;
+    border-radius: 8px;
+    padding: 30px 14px 18px;
+    text-align:center;
+    cursor:pointer;
+    background: repeating-linear-gradient(180deg, var(--wood) 0 16px, var(--wood-dark) 16px 18px);
+    border: 4px solid var(--wood-darker);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.22);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .crate:hover{ transform: translateY(-5px) rotate(-0.5deg); box-shadow: 0 14px 22px rgba(0,0,0,0.3); }
+  .crate::before, .crate::after{
+    content:"";
+    position:absolute;
+    top:6px; bottom:6px;
+    width:6px;
+    background: var(--wood-darker);
+    border-radius:2px;
+  }
+  .crate::before{ left:6px; }
+  .crate::after{ right:6px; }
+  .crate-label{
+    position:absolute;
+    top:-12px; left:50%;
+    transform: translateX(-50%) rotate(-2deg);
+    padding: 5px 16px;
+    border-radius: 4px;
+    font-family:'Permanent Marker', cursive;
+    font-size:1.05rem;
+    color: white;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    white-space:nowrap;
+  }
+  .crate-emoji{ font-size:2.2rem; display:block; margin: 6px 0 6px; }
+  .crate-count{
+    font-size:0.68rem;
+    font-weight:700;
+    color: var(--cream);
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    opacity:0.9;
+  }
+
+  #screen-recipes{ width:100%; }
+  .back-link{
+    font-family:'Nunito', sans-serif;
+    font-weight:800;
+    font-size:0.8rem;
+    color: var(--leaf-dark);
+    background: var(--leaf-pale);
+    border: 2px solid var(--leaf);
+    border-radius: 20px;
+    padding: 7px 16px;
+    cursor:pointer;
+    margin-bottom:20px;
+  }
+  .back-link:hover{ background: var(--leaf); color:white; }
+  .recipe-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px,1fr));
+    gap: 24px 20px;
+  }
+  .produce-card{
+    cursor:pointer;
+    background: var(--linen);
+    border-radius: 14px;
+    border: 3px solid #E4D6B8;
+    overflow:hidden;
+    transform: rotate(var(--tilt, -0.5deg));
+    transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  }
+  .produce-card:nth-child(2n){ --tilt: 0.6deg; }
+  .produce-card:nth-child(3n){ --tilt: -0.2deg; }
+  .produce-card:hover{ transform: rotate(0deg) translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.2); }
+  .produce-top{ height: 8px; }
+  .produce-body{ padding: 16px 18px 18px; }
+  .produce-card h3{
+    font-family:'Permanent Marker', cursive;
+    font-size:1.15rem;
+    margin: 4px 0 6px;
+    color: var(--charcoal);
+    line-height:1.25;
+  }
+  .produce-card p{
+    margin: 0 0 10px;
+    font-size:0.8rem;
+    color: var(--ink-soft);
+    line-height:1.4;
+  }
+  .produce-cta{
+    font-weight:800;
+    font-size:0.68rem;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+  }
+
+  #screen-detail{ width:100%; display:flex; justify-content:center; }
+  .board-wrap{ width:100%; max-width:580px; }
+  .chalkboard{
+    background: var(--chalkboard);
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 6px 6px;
+    border-radius: 10px;
+    border: 10px solid var(--wood-dark);
+    box-shadow: 0 16px 30px rgba(0,0,0,0.35), inset 0 0 40px rgba(0,0,0,0.25);
+    padding: 30px 30px 26px;
+    color: var(--chalk);
+  }
+  .detail-title{
+    font-family:'Permanent Marker', cursive;
+    font-size:2rem;
+    margin: 4px 0 6px;
+    color: var(--chalk);
+    line-height:1.15;
+  }
+  .detail-cat{
+    margin: 0 0 22px;
+    font-size:0.75rem;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color: var(--chalk-soft);
+  }
+  .detail-section-label{
+    font-family:'Permanent Marker', cursive;
+    font-size:1.05rem;
+    color: var(--lemon);
+    margin: 0 0 10px;
+  }
+  .ingredients-list{ margin: 0 0 24px; padding: 0; list-style:none; }
+  .ingredients-list li{
+    font-size:0.9rem;
+    padding: 4px 0;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .ingredients-list li::before{
+    content:"";
+    flex: 0 0 12px;
+    width:12px; height:12px;
+    margin-top:3px;
+    border: 2px solid var(--chalk-soft);
+    border-radius:3px;
+  }
+  .steps-list{ margin: 0; padding: 0; list-style:none; counter-reset: step; }
+  .steps-list li{
+    font-size:0.9rem;
+    line-height:1.55;
+    margin-bottom:14px;
+    padding-left: 34px;
+    position:relative;
+    counter-increment: step;
+  }
+  .steps-list li::before{
+    content: counter(step);
+    position:absolute;
+    left:0; top:-1px;
+    width:24px; height:24px;
+    border: 2px solid var(--lemon);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Permanent Marker', cursive;
+    font-size:0.85rem;
+    color: var(--lemon);
+  }
+
+  @media (max-width: 480px){
+    .seed-packet-body{ padding: 18px 20px 22px; }
+    .chalkboard{ padding: 22px 18px 20px; border-width:8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="veg">🥕</span>The Recipe Box<span class="veg">🍅</span></div>
+    <div class="userchip hidden" id="userchip">
+      <span id="userchip-name"></span>
+      <button id="logout-btn">Log out</button>
+    </div>
+  </div>
+</div>
+
+<div class="stage">
+
+  <div id="screen-auth">
+    <div class="seed-packet">
+      <div class="seed-packet-band"><div class="icons">🍓 🥦 🍋 🍆 🌽</div></div>
+      <div class="seed-packet-body">
+        <h1 class="auth-title" id="auth-title">Welcome back</h1>
+        <p class="auth-sub" id="auth-sub">Sign in to open your recipe box</p>
+
+        <div class="field hidden" id="field-name">
+          <label for="in-name">Name</label>
+          <input id="in-name" type="text" autocomplete="name" placeholder="Alex Rivera">
+        </div>
+        <div class="field">
+          <label for="in-email">Email</label>
+          <input id="in-email" type="email" autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="in-password">Password</label>
+          <input id="in-password" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+
+        <p class="auth-error" id="auth-error"></p>
+
+        <button class="btn-primary" id="auth-submit">Sign In</button>
+        <p class="switch-line" id="switch-line">New here? <a id="switch-link">Register an account</a></p>
+        <p class="auth-hint">Demo account — email: demo@cook.com · password: cook123</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-categories" class="hidden">
+    <h2 class="box-title">What's fresh in the kitchen today? 🌿</h2>
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <div id="screen-recipes" class="hidden">
+    <button class="back-link" id="back-to-categories">← Back to the stand</button>
+    <h2 class="box-title" id="recipes-title" style="text-align:left; margin-left:2px;"></h2>
+    <div class="recipe-grid" id="recipe-grid"></div>
+  </div>
+
+  <div id="screen-detail" class="hidden">
+    <div class="board-wrap">
+      <button class="back-link" id="back-to-recipes">← Back to recipes</button>
+      <div class="chalkboard">
+        <h2 class="detail-title" id="detail-title"></h2>
+        <p class="detail-cat" id="detail-cat"></p>
+        <p class="detail-section-label">🧺 Ingredients</p>
+        <ul class="ingredients-list" id="detail-ingredients"></ul>
+        <p class="detail-section-label">👩‍🍳 Steps</p>
+        <ol class="steps-list" id="detail-steps"></ol>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- Data ---------------- */
+const CATEGORIES = [
+  { key:'breakfast', name:'Breakfast', emoji:'🍳', color:'var(--lemon)', colorDark:'var(--lemon-dark)' },
+  { key:'lunch',     name:'Lunch',     emoji:'🥗', color:'var(--leaf)', colorDark:'var(--leaf-dark)' },
+  { key:'dinner',    name:'Dinner',    emoji:'🍝', color:'var(--tomato)', colorDark:'var(--tomato-dark)' },
+  { key:'snacks',    name:'Snacks',    emoji:'🥕', color:'var(--carrot)', colorDark:'var(--carrot-dark)' },
+  { key:'desserts',  name:'Desserts',  emoji:'🍇', color:'var(--berry)', colorDark:'var(--berry-dark)' },
+  { key:'drinks',    name:'Drinks',    emoji:'🍉', color:'var(--leaf)', colorDark:'var(--leaf-dark)' },
+];
+
+const RECIPES = {
+  breakfast: [
+    { name:'Fluffy Buttermilk Pancakes', blurb:'Soft, tall, syrup-ready.',
+      ingredients:['1 1/2 cups flour','1 tbsp sugar','1 tbsp baking powder','1/2 tsp salt','1 1/4 cups buttermilk','1 egg','3 tbsp melted butter'],
+      steps:['Whisk flour, sugar, baking powder and salt in a bowl.','Beat the egg with buttermilk and melted butter in another bowl.','Pour wet ingredients into dry and stir until just combined.','Heat a lightly greased skillet over medium heat.','Pour 1/4 cup batter per pancake; flip once bubbles form.','Cook until golden on both sides and serve warm.'] },
+    { name:'Avocado Toast with Chili Flakes', blurb:'Five minutes, big flavor.',
+      ingredients:['2 slices sourdough bread','1 ripe avocado','1/2 lemon','Chili flakes','Salt and pepper','Olive oil'],
+      steps:['Toast the sourdough until crisp.','Mash the avocado with lemon juice, salt and pepper.','Spread the mash generously over the toast.','Drizzle with olive oil and scatter chili flakes on top.'] },
+    { name:'Veggie & Cheese Omelette', blurb:'A fridge-clean-out classic.',
+      ingredients:['3 eggs','1/4 cup diced bell pepper','1/4 cup diced onion','1/4 cup shredded cheese','1 tbsp butter','Salt and pepper'],
+      steps:['Beat the eggs with salt and pepper.','Melt butter and sauté pepper and onion until soft.','Pour eggs over the vegetables and let set at the edges.','Sprinkle cheese over half the omelette.','Fold in half and cook 1 more minute, then serve.'] },
+    { name:'Classic French Toast', blurb:'Golden, custardy, weekend-worthy.',
+      ingredients:['4 slices thick bread','2 eggs','1/2 cup milk','1/2 tsp cinnamon','1 tsp vanilla','Butter for the pan'],
+      steps:['Whisk eggs, milk, cinnamon and vanilla in a shallow dish.','Dip each bread slice, coating both sides.','Melt butter in a skillet over medium heat.','Cook each slice 2–3 minutes per side until golden.','Serve with syrup or fresh fruit.'] },
+    { name:'Overnight Oats with Berries', blurb:'Prep at night, grab and go.',
+      ingredients:['1/2 cup rolled oats','1/2 cup milk','1/4 cup yogurt','1 tsp honey','1/2 cup mixed berries','1 tbsp chia seeds'],
+      steps:['Combine oats, milk, yogurt, honey and chia seeds in a jar.','Stir well and top with berries.','Cover and refrigerate overnight.','Stir again in the morning and enjoy cold.'] },
+    { name:'Loaded Breakfast Burrito', blurb:'A hearty start wrapped to go.',
+      ingredients:['2 large tortillas','4 eggs, scrambled','1/2 cup black beans','1/4 cup shredded cheese','1/4 cup salsa','1/2 avocado, sliced'],
+      steps:['Scramble the eggs in a lightly oiled pan.','Warm the tortillas and the black beans.','Layer eggs, beans, cheese, salsa and avocado down the center.','Fold in the sides and roll tightly.','Slice in half and serve warm.'] },
+    { name:'Blueberry Muffins', blurb:'Bakery-style with a golden top.',
+      ingredients:['2 cups flour','3/4 cup sugar','2 tsp baking powder','1/2 cup melted butter','1 cup milk','1 egg','1 1/2 cups blueberries'],
+      steps:['Preheat oven to 375°F (190°C) and line a muffin tin.','Mix flour, sugar and baking powder in a bowl.','Whisk together melted butter, milk and egg, then combine with dry ingredients.','Fold in blueberries gently.','Divide batter among muffin cups and bake 20–22 minutes.'] },
+    { name:'Shakshuka', blurb:'Eggs poached in a spiced tomato sauce.',
+      ingredients:['2 tbsp olive oil','1 onion, diced','1 bell pepper, diced','2 garlic cloves','400g canned tomatoes','1 tsp paprika','4 eggs'],
+      steps:['Heat oil and sauté onion and pepper until soft.','Add garlic and paprika, cooking 1 minute.','Pour in tomatoes and simmer 10 minutes until thickened.','Make wells in the sauce and crack in the eggs.','Cover and cook 5–7 minutes until whites are set.'] },
+    { name:'Granola Yogurt Bowl', blurb:'Crunchy, creamy, no cooking needed.',
+      ingredients:['1 cup Greek yogurt','1/2 cup granola','1/2 banana, sliced','1 tbsp honey','A pinch of cinnamon'],
+      steps:['Spoon yogurt into a bowl.','Top with granola and banana slices.','Drizzle with honey and dust with cinnamon.','Serve immediately for the best crunch.'] },
+    { name:'Crispy Belgian Waffles', blurb:'Deep pockets for extra syrup.',
+      ingredients:['2 cups flour','1 tbsp sugar','1 tbsp baking powder','2 eggs','1 3/4 cups milk','1/2 cup melted butter'],
+      steps:['Preheat the waffle iron.','Mix flour, sugar and baking powder in a bowl.','Whisk eggs, milk and melted butter together, then combine with dry ingredients.','Pour batter onto the hot iron and cook until golden and crisp.','Serve immediately with toppings of choice.'] },
+    { name:'Sweet Potato Breakfast Hash', blurb:'A savory, veggie-packed skillet.',
+      ingredients:['2 cups diced sweet potato','1 tbsp olive oil','1/2 onion, diced','1/2 bell pepper, diced','1 tsp smoked paprika','2 fried eggs'],
+      steps:['Heat oil in a skillet and add sweet potato.','Cook 10 minutes, stirring occasionally, until browning.','Add onion, pepper and paprika, cooking another 8 minutes until tender.','Season with salt and pepper.','Top with fried eggs and serve hot.'] },
+    { name:'Tropical Smoothie Bowl', blurb:'Thick, spoonable, sunshine in a bowl.',
+      ingredients:['1 frozen banana','1 cup frozen mango','1/2 cup coconut milk','1/4 cup granola','1 tbsp shredded coconut','Fresh fruit for topping'],
+      steps:['Blend banana, mango and coconut milk until thick and smooth.','Pour into a bowl.','Top with granola, shredded coconut and fresh fruit.','Serve right away with a spoon.'] },
+    { name:'Spinach & Feta Egg Muffins', blurb:'Grab-and-go protein, baked in a tin.',
+      ingredients:['6 eggs','1 cup spinach, chopped','1/3 cup crumbled feta','1/4 cup diced tomato','Salt and pepper'],
+      steps:['Preheat oven to 350°F (175°C) and grease a muffin tin.','Whisk eggs with salt and pepper.','Stir in spinach, feta and tomato.','Pour mixture into muffin cups, filling two-thirds full.','Bake 18–20 minutes until set.'] },
+    { name:'Cinnamon Sugar Toast', blurb:'A five-minute nostalgic favorite.',
+      ingredients:['2 slices bread','2 tbsp butter, softened','2 tbsp sugar','1 tsp cinnamon'],
+      steps:['Toast the bread lightly.','Mix sugar and cinnamon together.','Spread butter over the warm toast.','Sprinkle the cinnamon sugar evenly on top and serve.'] },
+    { name:'Breakfast Quesadilla', blurb:'Cheesy, folded, ready in minutes.',
+      ingredients:['2 flour tortillas','3 eggs, scrambled','1/2 cup shredded cheese','2 tbsp diced ham or veggies','Salsa for serving'],
+      steps:['Scramble the eggs in a pan and set aside.','Sprinkle cheese over half a tortilla, add eggs and ham or veggies.','Fold the tortilla over and press gently.','Cook in a dry pan 2 minutes per side until golden and cheese melts.','Slice into wedges and serve with salsa.'] },
+  ],
+  lunch: [
+    { name:'Chicken Caesar Wrap', blurb:'Lunchbox favorite, no soggy lettuce.',
+      ingredients:['1 large tortilla','1 cooked chicken breast, sliced','1 cup romaine, chopped','2 tbsp caesar dressing','2 tbsp parmesan, shaved'],
+      steps:['Lay the tortilla flat and spread dressing across the center.','Layer romaine, chicken and parmesan down the middle.','Fold in the sides, then roll tightly from the bottom.','Slice in half on a diagonal and serve.'] },
+    { name:'Tomato Basil Soup', blurb:'Cozy and quick, best with crusty bread.',
+      ingredients:['1 tbsp olive oil','1 onion, chopped','2 garlic cloves','800g canned tomatoes','2 cups vegetable stock','A handful of basil leaves','Salt and pepper'],
+      steps:['Heat oil and soften onion and garlic for 4 minutes.','Add canned tomatoes and stock, then simmer 15 minutes.','Stir in basil leaves and season with salt and pepper.','Blend until smooth with an immersion blender.','Ladle into bowls and serve hot.'] },
+    { name:'Quinoa & Chickpea Salad', blurb:'Make-ahead and holds up well.',
+      ingredients:['1 cup cooked quinoa','1 cup canned chickpeas, drained','1/2 cucumber, diced','1/2 cup cherry tomatoes, halved','2 tbsp olive oil','1 tbsp lemon juice','Salt and pepper'],
+      steps:['Combine quinoa, chickpeas, cucumber and tomatoes in a bowl.','Whisk olive oil and lemon juice together.','Pour dressing over the salad and toss well.','Season and chill 10 minutes before serving.'] },
+    { name:'Classic Grilled Cheese', blurb:'Crisp, buttery, endlessly comforting.',
+      ingredients:['2 slices bread','2 slices cheddar cheese','1 tbsp butter'],
+      steps:['Butter one side of each bread slice.','Place cheese between the slices, buttered sides out.','Grill in a skillet over medium heat, 3 minutes per side.','Cook until golden and cheese is melted, then slice and serve.'] },
+    { name:'Turkey Club Sandwich', blurb:'Triple-decker with all the fixings.',
+      ingredients:['3 slices bread, toasted','4 slices turkey','2 strips bacon, cooked','1 tomato, sliced','Lettuce leaves','2 tbsp mayonnaise'],
+      steps:['Spread mayonnaise on each slice of toast.','Layer turkey and lettuce on the first slice, top with the second.','Add bacon and tomato, then top with the final slice.','Secure with toothpicks, slice into quarters and serve.'] },
+    { name:'Greek Salad', blurb:'Crisp, briny, no lettuce required.',
+      ingredients:['2 tomatoes, cut into wedges','1 cucumber, sliced','1/2 red onion, thinly sliced','1/2 cup kalamata olives','1/2 cup feta, cubed','2 tbsp olive oil','1 tbsp red wine vinegar'],
+      steps:['Combine tomatoes, cucumber, onion and olives in a bowl.','Top with feta cubes.','Whisk olive oil and vinegar, then drizzle over the salad.','Season with oregano, salt and pepper, and serve.'] },
+    { name:'Veggie Burrito Bowl', blurb:'Build-your-own, endlessly customizable.',
+      ingredients:['1 cup cooked rice','1/2 cup black beans','1/2 cup corn','1/2 avocado, sliced','1/4 cup salsa','2 tbsp sour cream'],
+      steps:['Spoon rice into a bowl as the base.','Arrange black beans, corn and avocado on top.','Add salsa and a dollop of sour cream.','Toss lightly and serve with lime wedges.'] },
+    { name:'Caprese Sandwich', blurb:'Fresh mozzarella meets ripe tomato.',
+      ingredients:['1 baguette or ciabatta roll','Fresh mozzarella, sliced','1 tomato, sliced','Fresh basil leaves','2 tbsp balsamic glaze','Olive oil'],
+      steps:['Slice the bread open and drizzle with olive oil.','Layer mozzarella, tomato and basil inside.','Drizzle balsamic glaze over the filling.','Close the sandwich, press gently and slice in half.'] },
+    { name:'Chicken Noodle Soup', blurb:'The classic cure-all, made simple.',
+      ingredients:['1 tbsp olive oil','1 onion, diced','2 carrots, sliced','2 celery stalks, sliced','6 cups chicken broth','2 cups cooked shredded chicken','2 cups egg noodles'],
+      steps:['Heat oil and sauté onion, carrots and celery for 5 minutes.','Pour in broth and bring to a simmer.','Add chicken and noodles, cooking until noodles are tender, about 8 minutes.','Season with salt and pepper and serve hot.'] },
+    { name:'Falafel Pita', blurb:'Crispy chickpea patties, wrapped fresh.',
+      ingredients:['1 pita bread','4 falafel patties (store-bought or homemade)','2 tbsp hummus','1/4 cup shredded lettuce','1/4 cup diced tomato','2 tbsp tahini sauce'],
+      steps:['Warm the falafel patties until crisp.','Spread hummus inside the pita.','Add lettuce, tomato and falafel.','Drizzle with tahini sauce and serve.'] },
+    { name:'Tuna Salad Sandwich', blurb:'A tried-and-true lunchbox staple.',
+      ingredients:['1 can tuna, drained','2 tbsp mayonnaise','1 tbsp diced celery','1 tsp lemon juice','4 slices bread','Lettuce leaves'],
+      steps:['Mix tuna, mayonnaise, celery and lemon juice in a bowl.','Season with salt and pepper.','Spread the tuna mixture onto two slices of bread.','Top with lettuce and the remaining bread, then slice and serve.'] },
+    { name:'Cobb Salad', blurb:'A hearty, protein-packed classic.',
+      ingredients:['4 cups chopped lettuce','1 chicken breast, cooked and diced','2 hard-boiled eggs, sliced','2 strips bacon, crumbled','1/2 avocado, diced','1/4 cup blue cheese crumbles'],
+      steps:['Arrange lettuce as the base on a large platter.','Line up rows of chicken, egg, bacon, avocado and blue cheese.','Drizzle with your favorite dressing.','Toss at the table just before eating.'] },
+    { name:'Vegetable Stir-Fry Noodles', blurb:'A colorful, fast midday plate.',
+      ingredients:['200g noodles','1 carrot, julienned','1 cup broccoli florets','1/2 red bell pepper, sliced','3 tbsp soy sauce','1 tbsp sesame oil','2 garlic cloves, minced'],
+      steps:['Cook the noodles according to package instructions and drain.','Heat sesame oil and stir-fry garlic and vegetables for 3–4 minutes.','Add the noodles and soy sauce to the pan.','Toss everything together for 2 minutes and serve hot.'] },
+    { name:'Classic BLT Sandwich', blurb:'Bacon, lettuce and tomato, done right.',
+      ingredients:['4 slices bread, toasted','4 strips bacon, cooked','1 tomato, sliced','Lettuce leaves','2 tbsp mayonnaise'],
+      steps:['Spread mayonnaise on the toasted bread.','Layer lettuce, tomato and bacon on one slice.','Top with the second slice of bread.','Slice diagonally and serve.'] },
+    { name:'Minestrone Soup', blurb:'A vegetable-packed Italian classic.',
+      ingredients:['1 tbsp olive oil','1 onion, diced','2 carrots, diced','2 celery stalks, diced','1 can diced tomatoes','4 cups vegetable stock','1 cup small pasta','1 can cannellini beans'],
+      steps:['Heat oil and sauté onion, carrots and celery for 5 minutes.','Add tomatoes and stock, then bring to a boil.','Stir in pasta and beans, simmering until pasta is tender.','Season with salt, pepper and herbs, and serve.'] },
+  ],
+  dinner: [
+    { name:'Garlic Butter Salmon', blurb:'Restaurant results, one pan.',
+      ingredients:['2 salmon fillets','2 tbsp butter','3 garlic cloves, minced','1 lemon','Fresh parsley','Salt and pepper'],
+      steps:['Season salmon fillets with salt and pepper.','Melt butter in a hot pan and add garlic for 30 seconds.','Place salmon skin-side up and sear 4 minutes.','Flip, add a squeeze of lemon, and cook 4 more minutes.','Spoon the garlic butter over the top and garnish with parsley.'] },
+    { name:'Spaghetti Aglio e Olio', blurb:'Pantry pasta done properly.',
+      ingredients:['200g spaghetti','5 garlic cloves, thinly sliced','1/3 cup olive oil','1/2 tsp chili flakes','Fresh parsley','Salt'],
+      steps:['Cook spaghetti in salted water until al dente; reserve 1/2 cup pasta water.','Gently warm olive oil and garlic over low heat until fragrant.','Add chili flakes and a splash of pasta water.','Toss in the drained spaghetti and coat well.','Finish with parsley and serve immediately.'] },
+    { name:'Beef & Broccoli Stir-Fry', blurb:'Faster than delivery.',
+      ingredients:['300g beef strips','2 cups broccoli florets','3 tbsp soy sauce','1 tbsp cornstarch','2 garlic cloves, minced','1 tbsp vegetable oil','1/2 cup water'],
+      steps:['Toss beef strips with cornstarch and a splash of soy sauce.','Heat oil in a wok and sear beef until browned; set aside.','Stir-fry garlic and broccoli for 2 minutes.','Return beef to the wok with remaining soy sauce and water.','Cook until the sauce thickens and serve over rice.'] },
+    { name:'Chicken Parmesan', blurb:'Crispy, cheesy, weeknight-friendly.',
+      ingredients:['2 chicken breasts, pounded thin','1 cup breadcrumbs','1/2 cup parmesan','2 eggs, beaten','1 cup marinara sauce','1 cup shredded mozzarella'],
+      steps:['Preheat oven to 400°F (200°C).','Dip chicken in egg, then coat in breadcrumbs mixed with parmesan.','Pan-fry until golden on both sides, about 3 minutes per side.','Top with marinara and mozzarella, then bake 15 minutes until bubbly.'] },
+    { name:'Vegetable Curry', blurb:'Warming, spiced, and endlessly adaptable.',
+      ingredients:['1 tbsp oil','1 onion, chopped','2 tbsp curry powder','1 can coconut milk','2 cups mixed vegetables','1 can chickpeas','Salt to taste'],
+      steps:['Heat oil and sauté onion until soft.','Stir in curry powder and cook 1 minute until fragrant.','Add coconut milk, vegetables and chickpeas.','Simmer 15–20 minutes until vegetables are tender.','Season with salt and serve over rice.'] },
+    { name:'Beef Tacos', blurb:'A fast, family-friendly favorite.',
+      ingredients:['500g ground beef','1 packet taco seasoning (or 2 tbsp mixed spices)','8 small tortillas','Shredded lettuce','Shredded cheese','Salsa and sour cream'],
+      steps:['Brown the ground beef in a skillet, draining excess fat.','Stir in taco seasoning and a splash of water, simmering 5 minutes.','Warm the tortillas.','Fill each tortilla with beef, lettuce, cheese, salsa and sour cream.'] },
+    { name:'Shrimp Scampi', blurb:'Garlicky, buttery, ready in 20 minutes.',
+      ingredients:['400g shrimp, peeled','4 garlic cloves, minced','4 tbsp butter','1/4 cup white wine or broth','200g linguine','Fresh parsley','Lemon juice'],
+      steps:['Cook linguine in salted water until al dente.','Melt butter and sauté garlic until fragrant.','Add shrimp and cook 2 minutes per side until pink.','Pour in wine or broth and lemon juice, simmering briefly.','Toss with the pasta and parsley, then serve.'] },
+    { name:'Simple Roast Chicken', blurb:'A Sunday dinner staple.',
+      ingredients:['1 whole chicken','2 tbsp olive oil','1 lemon, halved','4 garlic cloves','Fresh rosemary','Salt and pepper'],
+      steps:['Preheat oven to 425°F (220°C).','Pat the chicken dry and rub with olive oil, salt and pepper.','Stuff the cavity with lemon, garlic and rosemary.','Roast 60–75 minutes until the juices run clear.','Rest 10 minutes before carving.'] },
+    { name:'Mushroom Risotto', blurb:'Creamy rice, stirred with patience.',
+      ingredients:['1 cup arborio rice','2 cups mushrooms, sliced','1 onion, diced','4 cups warm vegetable stock','1/2 cup white wine','1/2 cup parmesan','2 tbsp butter'],
+      steps:['Sauté mushrooms in butter until golden; set aside.','In the same pot, cook onion until soft, then add rice and toast briefly.','Pour in wine and stir until absorbed.','Add stock one ladle at a time, stirring until each is absorbed.','Stir in mushrooms and parmesan, then serve.'] },
+    { name:'Pork Chops with Apples', blurb:'Sweet and savory in one skillet.',
+      ingredients:['2 pork chops','1 apple, sliced','1 tbsp butter','1 tbsp brown sugar','1/2 tsp cinnamon','Salt and pepper'],
+      steps:['Season pork chops with salt and pepper.','Sear in a hot skillet 4 minutes per side; set aside.','In the same pan, cook apple slices with butter, sugar and cinnamon.','Return the chops to the pan and simmer 2 minutes with the apples.','Serve chops topped with the apple mixture.'] },
+    { name:'Vegetable Lasagna', blurb:'Layered comfort, no meat required.',
+      ingredients:['9 lasagna noodles','2 cups ricotta','2 cups mixed vegetables, chopped','3 cups marinara sauce','2 cups shredded mozzarella','1/2 cup parmesan'],
+      steps:['Preheat oven to 375°F (190°C).','Cook noodles according to package instructions.','Sauté the vegetables until tender.','Layer noodles, ricotta, vegetables, sauce and mozzarella in a baking dish, repeating.','Top with parmesan and bake covered 25 minutes, then uncovered 15 minutes.'] },
+    { name:'Baja Fish Tacos', blurb:'Crispy fish, bright and zesty toppings.',
+      ingredients:['400g white fish fillets','1 cup flour','1 tsp paprika','8 small tortillas','1 cup shredded cabbage','1/4 cup lime crema (sour cream and lime juice)'],
+      steps:['Season flour with paprika, salt and pepper, then coat the fish.','Pan-fry fish 3–4 minutes per side until crisp and cooked through.','Warm the tortillas.','Fill each with fish, cabbage and a drizzle of lime crema.'] },
+    { name:'Hearty Beef Stew', blurb:'Slow, rich, and worth the wait.',
+      ingredients:['600g beef stew meat, cubed','3 carrots, chopped','3 potatoes, chopped','1 onion, diced','4 cups beef broth','2 tbsp tomato paste','2 tbsp flour'],
+      steps:['Toss beef with flour and brown in a pot.','Add onion and cook until softened.','Stir in tomato paste, then pour in broth.','Add carrots and potatoes, then simmer covered 1.5 hours until tender.','Season to taste and serve hot.'] },
+    { name:'Butter Chicken', blurb:'Rich, creamy, and mildly spiced.',
+      ingredients:['500g chicken thighs, cubed','1 cup yogurt','2 tbsp butter','1 onion, diced','2 tbsp tikka masala paste','1 cup tomato puree','1/2 cup cream'],
+      steps:['Marinate chicken in yogurt for at least 30 minutes.','Sear the chicken in butter until browned; set aside.','Sauté onion, then stir in masala paste and tomato puree.','Simmer 10 minutes, then return the chicken to the pan.','Stir in cream and simmer 5 more minutes before serving.'] },
+    { name:'Stuffed Bell Peppers', blurb:'A colorful, complete meal in one bite.',
+      ingredients:['4 bell peppers, tops removed and seeded','1 cup cooked rice','300g ground beef or turkey','1/2 cup marinara sauce','1/2 cup shredded cheese','1 tsp Italian seasoning'],
+      steps:['Preheat oven to 375°F (190°C).','Brown the ground meat, then mix with rice, marinara and seasoning.','Stuff the mixture into each bell pepper.','Place peppers in a baking dish and top with cheese.','Bake 30 minutes until peppers are tender and cheese is melted.'] },
+  ],
+  snacks: [
+    { name:'Hummus & Veggie Sticks', blurb:'Crunchy, dippable, no cooking.',
+      ingredients:['1 cup hummus','2 carrots, cut into sticks','1 cucumber, cut into sticks','1 bell pepper, sliced','Paprika for garnish'],
+      steps:['Spoon hummus into a shallow bowl and smooth the top.','Drizzle with olive oil and dust with paprika.','Arrange carrot, cucumber and pepper sticks around the bowl.','Serve immediately.'] },
+    { name:'Baked Kale Chips', blurb:'A crispy, salty green fix.',
+      ingredients:['4 cups kale, torn into pieces','1 tbsp olive oil','1/2 tsp salt','1/4 tsp garlic powder'],
+      steps:['Preheat oven to 300°F (150°C).','Toss kale with olive oil, salt and garlic powder.','Spread in a single layer on a baking sheet.','Bake 12–15 minutes, tossing halfway, until crisp.','Cool 2 minutes before serving.'] },
+    { name:'Homemade Trail Mix', blurb:'Portable energy, zero prep heat.',
+      ingredients:['1/2 cup almonds','1/2 cup cashews','1/3 cup dried cranberries','1/3 cup pumpkin seeds','1/4 cup dark chocolate chips'],
+      steps:['Combine all ingredients in a large bowl.','Toss to distribute evenly.','Store in an airtight container or portion into small bags.'] },
+    { name:'Classic Deviled Eggs', blurb:'A party platter regular.',
+      ingredients:['6 hard-boiled eggs','3 tbsp mayonnaise','1 tsp mustard','Salt and pepper','Paprika for garnish'],
+      steps:['Halve the eggs and scoop the yolks into a bowl.','Mash yolks with mayonnaise, mustard, salt and pepper.','Spoon or pipe the filling back into the egg whites.','Dust with paprika and chill before serving.'] },
+    { name:'Guacamole & Tortilla Chips', blurb:'Ripe avocado, quick mash, big flavor.',
+      ingredients:['2 ripe avocados','1/2 lime, juiced','1/4 cup diced onion','1 tomato, diced','1 tbsp chopped cilantro','Salt to taste','Tortilla chips for serving'],
+      steps:['Mash the avocados in a bowl to your preferred texture.','Stir in lime juice, onion, tomato and cilantro.','Season with salt to taste.','Serve immediately with tortilla chips.'] },
+    { name:'Herb-Buttered Popcorn', blurb:'A movie-night upgrade.',
+      ingredients:['1/2 cup popcorn kernels','2 tbsp oil','3 tbsp melted butter','1 tsp mixed dried herbs','Salt to taste'],
+      steps:['Heat oil in a large pot and add popcorn kernels.','Cover and shake occasionally until popping slows.','Transfer to a bowl and drizzle with melted butter.','Sprinkle with herbs and salt, then toss well.'] },
+    { name:'Caprese Skewers', blurb:'A bite-sized appetizer, no plate needed.',
+      ingredients:['1 cup cherry tomatoes','1 cup mini mozzarella balls','Fresh basil leaves','2 tbsp balsamic glaze','Skewers or toothpicks'],
+      steps:['Thread a tomato, a basil leaf and a mozzarella ball onto each skewer.','Repeat until all ingredients are used.','Arrange on a platter and drizzle with balsamic glaze.','Serve chilled or at room temperature.'] },
+    { name:'Crispy Roasted Chickpeas', blurb:'A crunchy, protein-rich snack.',
+      ingredients:['1 can chickpeas, drained and dried','1 tbsp olive oil','1/2 tsp smoked paprika','1/2 tsp salt'],
+      steps:['Preheat oven to 400°F (200°C).','Toss chickpeas with olive oil, paprika and salt.','Spread on a baking sheet in a single layer.','Roast 25–30 minutes, shaking the pan halfway, until crisp.'] },
+    { name:'Peanut Butter Energy Balls', blurb:'No-bake fuel for busy afternoons.',
+      ingredients:['1 cup rolled oats','1/2 cup peanut butter','1/3 cup honey','1/4 cup mini chocolate chips','1 tsp vanilla'],
+      steps:['Mix all ingredients together in a bowl until well combined.','Chill the mixture for 15 minutes to firm up.','Roll into small balls with your hands.','Store in the fridge in an airtight container.'] },
+    { name:'Cheese & Cracker Board', blurb:'An easy grazing spread.',
+      ingredients:['200g assorted cheese, sliced','1 box crackers','1/2 cup grapes','2 tbsp honey','A handful of nuts'],
+      steps:['Arrange the cheese slices across a board.','Add crackers, grapes and nuts around the cheese.','Drizzle a little honey over one or two cheeses.','Serve at room temperature for the best flavor.'] },
+    { name:'Stuffed Mushrooms', blurb:'A warm, savory bite-sized appetizer.',
+      ingredients:['12 button mushrooms, stems removed','1/2 cup breadcrumbs','1/4 cup parmesan','2 garlic cloves, minced','2 tbsp olive oil','Fresh parsley'],
+      steps:['Preheat oven to 375°F (190°C).','Mix breadcrumbs, parmesan, garlic and olive oil in a bowl.','Spoon the mixture into each mushroom cap.','Bake 15–18 minutes until golden and tender.','Garnish with parsley before serving.'] },
+    { name:'Fresh Fruit Kabobs', blurb:'A naturally sweet, colorful snack.',
+      ingredients:['1 cup strawberries','1 cup pineapple chunks','1 cup melon balls','1 cup grapes','Skewers'],
+      steps:['Wash and prepare all the fruit.','Thread fruit pieces onto skewers, alternating colors.','Arrange on a platter.','Serve chilled, optionally with a yogurt dip.'] },
+    { name:'Cucumber Sandwich Bites', blurb:'Light, refreshing, tea-time ready.',
+      ingredients:['1 cucumber, sliced into rounds','4 oz cream cheese, softened','1 tsp fresh dill','1/2 tsp lemon zest','Salt and pepper'],
+      steps:['Mix cream cheese with dill, lemon zest, salt and pepper.','Spread a small amount onto each cucumber round.','Arrange on a plate.','Chill briefly before serving for the best texture.'] },
+    { name:'Baked Sweet Potato Fries', blurb:'Crispy edges, naturally sweet.',
+      ingredients:['2 sweet potatoes, cut into sticks','2 tbsp olive oil','1 tsp paprika','1/2 tsp salt'],
+      steps:['Preheat oven to 425°F (220°C).','Toss sweet potato sticks with oil, paprika and salt.','Spread in a single layer on a baking sheet.','Bake 25–30 minutes, flipping halfway, until crisp.'] },
+    { name:'Loaded Nachos', blurb:'A shareable snack platter classic.',
+      ingredients:['1 bag tortilla chips','1 cup shredded cheese','1/2 cup black beans','1/4 cup diced tomato','1/4 cup sliced jalapeños','Sour cream and salsa for serving'],
+      steps:['Preheat oven to 400°F (200°C).','Spread tortilla chips on a baking sheet and top with cheese and black beans.','Bake 8–10 minutes until the cheese melts.','Top with tomato and jalapeños.','Serve with sour cream and salsa on the side.'] },
+  ],
+  desserts: [
+    { name:'Chewy Chocolate Chip Cookies', blurb:'Crisp edges, soft centers.',
+      ingredients:['2 1/4 cups flour','1 tsp baking soda','1 cup butter, softened','3/4 cup brown sugar','3/4 cup white sugar','2 eggs','2 cups chocolate chips'],
+      steps:['Preheat oven to 375°F (190°C).','Cream butter with both sugars until fluffy.','Beat in eggs one at a time.','Mix in flour and baking soda until just combined.','Fold in chocolate chips.','Bake 9–11 minutes until edges are golden.'] },
+    { name:'Classic Banana Bread', blurb:'The best thing to do with spotty bananas.',
+      ingredients:['3 ripe bananas, mashed','1/3 cup melted butter','3/4 cup sugar','1 egg','1 tsp vanilla','1 tsp baking soda','1 1/2 cups flour'],
+      steps:['Preheat oven to 350°F (175°C) and grease a loaf pan.','Mix mashed bananas with melted butter.','Stir in sugar, egg and vanilla.','Sprinkle baking soda over the mixture and mix in.','Fold in the flour until just combined.','Bake 55–60 minutes until a toothpick comes out clean.'] },
+    { name:'Berry Yogurt Parfait', blurb:'No-bake and endlessly customizable.',
+      ingredients:['2 cups Greek yogurt','1 cup mixed berries','1/2 cup granola','2 tbsp honey'],
+      steps:['Spoon a layer of yogurt into a glass.','Add a layer of berries, then a layer of granola.','Repeat the layers until the glass is full.','Drizzle honey over the top and serve immediately.'] },
+    { name:'Fudgy Brownies', blurb:'Dense, rich, and deeply chocolatey.',
+      ingredients:['1/2 cup butter, melted','1 cup sugar','2 eggs','1/3 cup cocoa powder','1/2 cup flour','1/4 tsp salt'],
+      steps:['Preheat oven to 350°F (175°C) and line a baking pan.','Whisk melted butter and sugar together.','Beat in eggs one at a time.','Stir in cocoa powder, flour and salt until just combined.','Pour into the pan and bake 25 minutes.'] },
+    { name:'Warm Apple Crumble', blurb:'Tender fruit under a crisp topping.',
+      ingredients:['4 apples, peeled and sliced','1/4 cup sugar','1 tsp cinnamon','3/4 cup oats','1/2 cup flour','1/3 cup brown sugar','1/3 cup cold butter'],
+      steps:['Preheat oven to 375°F (190°C).','Toss apples with sugar and cinnamon, then place in a baking dish.','Mix oats, flour and brown sugar, then cut in cold butter until crumbly.','Sprinkle the topping evenly over the apples.','Bake 35–40 minutes until golden and bubbling.'] },
+    { name:'Creamy Rice Pudding', blurb:'A gentle, comforting classic.',
+      ingredients:['1/2 cup rice','2 cups milk','1/4 cup sugar','1/2 tsp vanilla','A pinch of cinnamon'],
+      steps:['Combine rice and milk in a saucepan and bring to a gentle simmer.','Cook, stirring often, for 20–25 minutes until thickened.','Stir in sugar and vanilla.','Serve warm with a dusting of cinnamon.'] },
+    { name:'Tangy Lemon Bars', blurb:'A buttery crust with a bright topping.',
+      ingredients:['1 cup flour','1/4 cup powdered sugar','1/2 cup cold butter','2 eggs','1 cup sugar','1/3 cup lemon juice','2 tbsp flour (for filling)'],
+      steps:['Preheat oven to 350°F (175°C).','Mix flour, powdered sugar and butter into a dough and press into a pan; bake 15 minutes.','Whisk eggs, sugar, lemon juice and 2 tbsp flour together.','Pour over the baked crust and bake another 20 minutes.','Cool completely before slicing.'] },
+    { name:'Strawberry Shortcake', blurb:'Buttery biscuits meet fresh berries.',
+      ingredients:['2 cups flour','1/4 cup sugar','1 tbsp baking powder','1/2 cup cold butter','3/4 cup milk','2 cups strawberries, sliced','Whipped cream'],
+      steps:['Preheat oven to 400°F (200°C).','Mix flour, sugar and baking powder, then cut in cold butter.','Stir in milk until a soft dough forms.','Shape into rounds and bake 12–15 minutes until golden.','Split biscuits and layer with strawberries and whipped cream.'] },
+    { name:'Silky Chocolate Mousse', blurb:'Light, airy, and rich at once.',
+      ingredients:['200g dark chocolate, melted','3 eggs, separated','1/4 cup sugar','1 cup heavy cream, whipped'],
+      steps:['Melt the chocolate and let cool slightly.','Whisk egg yolks into the melted chocolate.','Beat egg whites with sugar until stiff peaks form, then fold into the chocolate.','Gently fold in the whipped cream.','Chill for at least 2 hours before serving.'] },
+    { name:'Classic Carrot Cake', blurb:'Spiced, moist, and topped with cream cheese.',
+      ingredients:['2 cups flour','2 tsp baking soda','2 tsp cinnamon','3 eggs','1 cup oil','1 1/2 cups sugar','3 cups grated carrot','Cream cheese frosting'],
+      steps:['Preheat oven to 350°F (175°C) and grease two cake pans.','Mix flour, baking soda and cinnamon in a bowl.','Beat eggs, oil and sugar together, then fold in the dry ingredients.','Stir in grated carrot and divide batter between the pans.','Bake 30–35 minutes, cool, then frost with cream cheese frosting.'] },
+    { name:'Peach Cobbler', blurb:'A juicy, biscuit-topped summer favorite.',
+      ingredients:['4 cups sliced peaches','1/2 cup sugar','1 cup flour','1 cup milk','1 tsp baking powder','1/2 cup melted butter'],
+      steps:['Preheat oven to 350°F (175°C) and pour melted butter into a baking dish.','Mix flour, sugar, baking powder and milk into a batter.','Pour the batter over the butter without stirring.','Spoon the peaches evenly over the batter.','Bake 40–45 minutes until golden and bubbling.'] },
+    { name:'No-Bake Tiramisu Cups', blurb:'Coffee-soaked layers, no oven needed.',
+      ingredients:['1 cup strong coffee, cooled','16 ladyfinger cookies','1 cup mascarpone','1/2 cup whipped cream','3 tbsp sugar','Cocoa powder for dusting'],
+      steps:['Mix mascarpone, whipped cream and sugar until smooth.','Quickly dip ladyfingers in coffee and layer in cups.','Spread a layer of the mascarpone mixture on top.','Repeat the layers, then dust with cocoa powder.','Chill at least 2 hours before serving.'] },
+    { name:'Oatmeal Raisin Cookies', blurb:'Chewy, spiced, and full of texture.',
+      ingredients:['1 cup butter, softened','1 cup brown sugar','2 eggs','3 cups oats','1 cup flour','1 tsp cinnamon','1 cup raisins'],
+      steps:['Preheat oven to 350°F (175°C).','Cream butter and brown sugar, then beat in eggs.','Stir in oats, flour and cinnamon until combined.','Fold in raisins.','Scoop onto a baking sheet and bake 10–12 minutes.'] },
+    { name:'Mini Cheesecake Bites', blurb:'A no-fuss, individually portioned treat.',
+      ingredients:['1 cup crushed graham crackers','1/4 cup melted butter','16 oz cream cheese, softened','1/2 cup sugar','2 eggs','1 tsp vanilla'],
+      steps:['Preheat oven to 325°F (165°C) and line a muffin tin.','Mix graham crackers with melted butter and press into the bottom of each cup.','Beat cream cheese, sugar, eggs and vanilla until smooth.','Spoon the filling over the crusts.','Bake 18–20 minutes, then chill before serving.'] },
+    { name:'Cinnamon Baked Apples', blurb:'A warm, lighter way to end a meal.',
+      ingredients:['4 apples, cored','2 tbsp brown sugar','1 tsp cinnamon','2 tbsp butter','1/4 cup chopped walnuts'],
+      steps:['Preheat oven to 350°F (175°C).','Mix brown sugar, cinnamon and walnuts in a bowl.','Fill each cored apple with the mixture and top with a small pat of butter.','Place apples in a baking dish with a little water.','Bake 35–40 minutes until tender.'] },
+  ],
+  drinks: [
+    { name:'Mango Smoothie', blurb:'Tastes like a tropical vacation.',
+      ingredients:['1 1/2 cups frozen mango chunks','1 banana','1 cup orange juice','1/2 cup Greek yogurt','1 tbsp honey'],
+      steps:['Add all ingredients to a blender.','Blend on high until completely smooth.','Add a splash more juice if it is too thick.','Pour into a glass and serve right away.'] },
+    { name:'Iced Chai Latte', blurb:'Spiced, sweet, cafe-worthy at home.',
+      ingredients:['2 chai tea bags','1 cup hot water','1 cup milk','1 tbsp honey or sugar','Ice cubes'],
+      steps:['Steep chai tea bags in hot water for 5 minutes.','Stir in honey while the tea is still hot.','Fill a glass with ice and pour in the chai.','Top with milk and stir well before drinking.'] },
+    { name:'Lemon Mint Cooler', blurb:'Refreshing, sugar adjustable.',
+      ingredients:['1/2 cup fresh lemon juice','3 tbsp sugar or honey','2 cups cold water','A handful of mint leaves','Ice cubes'],
+      steps:['Muddle mint leaves lightly in a pitcher.','Add lemon juice and sugar, stirring until dissolved.','Pour in cold water and mix well.','Serve over ice, garnished with extra mint.'] },
+    { name:'Classic Iced Coffee', blurb:'Smooth, cold, and never bitter.',
+      ingredients:['1 cup strong brewed coffee, cooled','1/2 cup milk','1 tbsp simple syrup','Ice cubes'],
+      steps:['Fill a glass with ice cubes.','Pour the cooled coffee over the ice.','Add milk and simple syrup.','Stir well and serve immediately.'] },
+    { name:'Watermelon Cooler', blurb:'Hydrating and naturally sweet.',
+      ingredients:['3 cups cubed watermelon','1/2 lime, juiced','1 cup cold water','Fresh mint leaves','Ice cubes'],
+      steps:['Blend watermelon with lime juice and water until smooth.','Strain if a smoother texture is preferred.','Pour over ice in glasses.','Garnish with mint and serve.'] },
+    { name:'Rich Hot Chocolate', blurb:'A cozy classic for cold days.',
+      ingredients:['2 cups milk','1/3 cup chocolate chips','1 tbsp cocoa powder','1 tbsp sugar','A pinch of salt'],
+      steps:['Warm the milk in a saucepan over medium-low heat.','Whisk in cocoa powder, sugar and salt.','Add chocolate chips and stir until fully melted.','Pour into mugs and serve warm, with marshmallows if desired.'] },
+    { name:'Green Detox Smoothie', blurb:'A veggie-forward energizing sip.',
+      ingredients:['1 cup spinach','1/2 cucumber','1 green apple, chopped','1/2 banana','1 cup coconut water','1/2 lemon, juiced'],
+      steps:['Add all ingredients to a blender.','Blend until smooth, adding more coconut water if needed.','Taste and adjust with more lemon if desired.','Pour into a glass and serve chilled.'] },
+    { name:'Strawberry Lemonade', blurb:'A sweet-tart summer favorite.',
+      ingredients:['1 cup strawberries, hulled','1/2 cup fresh lemon juice','1/4 cup sugar','3 cups cold water','Ice cubes'],
+      steps:['Blend strawberries until smooth, then strain if desired.','Combine strawberry puree, lemon juice, sugar and water in a pitcher.','Stir until the sugar dissolves.','Serve over ice, garnished with a lemon slice.'] },
+    { name:'Iced Matcha Latte', blurb:'Earthy, smooth, and gently sweet.',
+      ingredients:['1 tsp matcha powder','2 tbsp hot water','1 cup milk','1 tbsp honey or simple syrup','Ice cubes'],
+      steps:['Whisk matcha powder with hot water until smooth and frothy.','Fill a glass with ice cubes.','Pour in the milk and sweetener.','Top with the matcha mixture and stir gently before drinking.'] },
+    { name:'Mixed Berry Iced Tea', blurb:'A fruity twist on a classic pitcher drink.',
+      ingredients:['4 cups brewed black tea, cooled','1 cup mixed berries, crushed','3 tbsp sugar','Ice cubes','Fresh mint for garnish'],
+      steps:['Brew the tea and let it cool completely.','Stir crushed berries and sugar into the tea.','Strain if a clearer drink is preferred.','Serve over ice with a sprig of mint.'] },
+    { name:'Pineapple Ginger Cooler', blurb:'Zesty, tropical, and a little spicy.',
+      ingredients:['2 cups pineapple juice','1 tsp fresh ginger, grated','1 tbsp lime juice','1 cup sparkling water','Ice cubes'],
+      steps:['Combine pineapple juice, ginger and lime juice in a pitcher.','Let sit for 5 minutes so the ginger infuses.','Strain if desired, then pour over ice.','Top with sparkling water and stir gently.'] },
+    { name:'Cucumber Mint Infused Water', blurb:'Simple, hydrating, endlessly refreshing.',
+      ingredients:['1 cucumber, thinly sliced','A handful of mint leaves','1 lemon, sliced','1 liter cold water','Ice cubes'],
+      steps:['Add cucumber, mint and lemon slices to a large pitcher.','Pour in the cold water.','Refrigerate for at least 1 hour to let the flavors infuse.','Serve over ice.'] },
+    { name:'Golden Turmeric Milk', blurb:'A warm, soothing bedtime drink.',
+      ingredients:['2 cups milk','1 tsp turmeric powder','1/2 tsp cinnamon','1 tbsp honey','A pinch of black pepper'],
+      steps:['Warm the milk gently in a saucepan.','Whisk in turmeric, cinnamon and black pepper.','Simmer for 3–4 minutes, stirring occasionally.','Remove from heat, stir in honey, and serve warm.'] },
+    { name:'Orange Creamsicle Smoothie', blurb:'Tastes like the frozen treat, in a glass.',
+      ingredients:['1 cup orange juice','1/2 cup vanilla yogurt','1 banana','1/2 cup ice','1 tsp vanilla extract'],
+      steps:['Add all ingredients to a blender.','Blend until smooth and creamy.','Pour into a glass immediately.','Serve with a straw while still cold.'] },
+    { name:'Sparkling Cranberry Spritzer', blurb:'A festive, fizzy non-alcoholic sipper.',
+      ingredients:['2 cups cranberry juice','2 cups sparkling water','2 tbsp lime juice','Fresh cranberries for garnish','Ice cubes'],
+      steps:['Fill glasses with ice cubes.','Pour in the cranberry juice and lime juice.','Top with sparkling water and stir gently.','Garnish with fresh cranberries and serve immediately.'] },
+  ],
+};
+
+/* ---------------- In-memory auth state ---------------- */
+let users = [
+  { name:'Demo Cook', email:'demo@cook.com', password:'cook123' }
+];
+let currentUser = null;
+let authMode = 'login';
+let activeCategory = null;
+let activeRecipe = null;
+
+/* ---------------- DOM refs ---------------- */
+const screens = {
+  auth: document.getElementById('screen-auth'),
+  categories: document.getElementById('screen-categories'),
+  recipes: document.getElementById('screen-recipes'),
+  detail: document.getElementById('screen-detail'),
+};
+const userchip = document.getElementById('userchip');
+const userchipName = document.getElementById('userchip-name');
+
+function showScreen(name){
+  Object.values(screens).forEach(s => s.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
+}
+
+/* ---------------- Auth screen logic ---------------- */
+const authTitle = document.getElementById('auth-title');
+const authSub = document.getElementById('auth-sub');
+const fieldName = document.getElementById('field-name');
+const inName = document.getElementById('in-name');
+const inEmail = document.getElementById('in-email');
+const inPassword = document.getElementById('in-password');
+const authError = document.getElementById('auth-error');
+const authSubmit = document.getElementById('auth-submit');
+const switchLine = document.getElementById('switch-line');
+
+function renderAuthMode(){
+  authError.textContent = '';
+  if(authMode === 'login'){
+    authTitle.textContent = 'Welcome back';
+    authSub.textContent = 'Sign in to open your recipe box';
+    fieldName.classList.add('hidden');
+    authSubmit.textContent = 'Sign In';
+    switchLine.innerHTML = 'New here? <a id="switch-link">Register an account</a>';
+  } else {
+    authTitle.textContent = 'Join the box';
+    authSub.textContent = 'Create an account to get cooking';
+    fieldName.classList.remove('hidden');
+    authSubmit.textContent = 'Register';
+    switchLine.innerHTML = 'Already have an account? <a id="switch-link">Sign in</a>';
+  }
+  document.getElementById('switch-link').addEventListener('click', () => {
+    authMode = authMode === 'login' ? 'register' : 'login';
+    inName.value = ''; inEmail.value=''; inPassword.value='';
+    renderAuthMode();
+  });
+}
+renderAuthMode();
+
+authSubmit.addEventListener('click', () => {
+  const email = inEmail.value.trim().toLowerCase();
+  const password = inPassword.value;
+  authError.textContent = '';
+
+  if(authMode === 'register'){
+    const name = inName.value.trim();
+    if(!name || !email || !password){
+      authError.textContent = 'Please fill in every field.'; return;
+    }
+    if(users.some(u => u.email === email)){
+      authError.textContent = 'An account with that email already exists.'; return;
+    }
+    const newUser = { name, email, password };
+    users.push(newUser);
+    currentUser = newUser;
+    enterApp();
+    return;
+  }
+
+  if(!email || !password){
+    authError.textContent = 'Enter your email and password.'; return;
+  }
+  const found = users.find(u => u.email === email && u.password === password);
+  if(!found){
+    authError.textContent = 'No matching account. Check your details or register.'; return;
+  }
+  currentUser = found;
+  enterApp();
+});
+
+function enterApp(){
+  userchip.classList.remove('hidden');
+  userchipName.textContent = currentUser.name;
+  inName.value=''; inEmail.value=''; inPassword.value='';
+  renderCategories();
+  showScreen('categories');
+}
+
+document.getElementById('logout-btn').addEventListener('click', () => {
+  currentUser = null;
+  userchip.classList.add('hidden');
+  authMode = 'login';
+  renderAuthMode();
+  showScreen('auth');
+});
+
+/* ---------------- Category screen ---------------- */
+function renderCategories(){
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const el = document.createElement('div');
+    el.className = 'crate';
+    el.tabIndex = 0;
+    el.innerHTML = `
+      <div class="crate-label" style="background:${cat.color}; border:2px solid ${cat.colorDark};">${cat.name}</div>
+      <span class="crate-emoji">${cat.emoji}</span>
+      <div class="crate-count">${RECIPES[cat.key].length} recipes</div>
+    `;
+    const open = () => { activeCategory = cat.key; renderRecipeList(); showScreen('recipes'); };
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', e => { if(e.key === 'Enter') open(); });
+    tabs.appendChild(el);
+  });
+}
+document.getElementById('back-to-categories').addEventListener('click', () => showScreen('categories'));
+
+/* ---------------- Recipe list screen ---------------- */
+function renderRecipeList(){
+  const cat = CATEGORIES.find(c => c.key === activeCategory);
+  document.getElementById('recipes-title').innerHTML =
+    `<span style="color:var(--leaf-dark)">${cat.emoji} ${cat.name}</span>`;
+  const grid = document.getElementById('recipe-grid');
+  grid.innerHTML = '';
+  RECIPES[activeCategory].forEach((r, idx) => {
+    const el = document.createElement('div');
+    el.className = 'produce-card';
+    el.tabIndex = 0;
+    el.innerHTML = `
+      <div class="produce-top" style="background:${cat.color}"></div>
+      <div class="produce-body">
+        <h3>${r.name}</h3>
+        <p>${r.blurb}</p>
+        <p class="produce-cta" style="color:${cat.colorDark}">View recipe →</p>
+      </div>`;
+    const open = () => { activeRecipe = { cat: activeCategory, idx }; renderDetail(); showScreen('detail'); };
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', e => { if(e.key === 'Enter') open(); });
+    grid.appendChild(el);
+  });
+}
+document.getElementById('back-to-recipes').addEventListener('click', () => showScreen('recipes'));
+
+/* ---------------- Recipe detail screen ---------------- */
+function renderDetail(){
+  const cat = CATEGORIES.find(c => c.key === activeRecipe.cat);
+  const r = RECIPES[activeRecipe.cat][activeRecipe.idx];
+  document.getElementById('detail-title').textContent = r.name;
+  document.getElementById('detail-cat').textContent = `${cat.emoji} ${cat.name}`;
+
+  const ing = document.getElementById('detail-ingredients');
+  ing.innerHTML = '';
+  r.ingredients.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    ing.appendChild(li);
+  });
+
+  const steps = document.getElementById('detail-steps');
+  steps.innerHTML = '';
+  r.steps.forEach(step => {
+    const li = document.createElement('li');
+    li.textContent = step;
+    steps.appendChild(li);
+  });
+}
+
+/* ---------------- Init ---------------- */
+showScreen('auth');
+</script>
+</body>
+</html>
